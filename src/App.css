@@ -1,38 +1,177 @@
+/* src/App.css */
+
+/* General Styles */
 .App {
-  text-align: center;
+  font-family: Arial, sans-serif;
+
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.game-container {
+  position: relative;
+  width: 1024px;
+  height: 600px;
+  margin: 0 auto;
+  overflow: hidden;
+  background-color: #87CEEB; /* Sky blue background */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.game-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.aircraft {
+  position: absolute;
+  width: 100px;
+  height: 50px;
+  background: url('./components/assets/aircraft.png') no-repeat center center;
+  background-size: contain;
+}
+/* src/App.css */
+
+.star, .parachute {
+  transition: opacity 0.5s ease;
+}
+
+.star.hidden, .parachute.hidden {
+  opacity: 0;
+}
+
+.star, .parachute {
+  position: absolute;
+  width: 30px; /* Adjust size as needed */
+  height: 30px;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.star {
+  background-image: url('./components/assets/star.png');
+}
+
+.parachute {
+  background-image: url('./components/assets/parachute.png');
+}
+
+.bird {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: url('./components/assets/bird.png') no-repeat center center;
+  background-size: contain;
+}
+
+.parachute {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: url('./components/assets/parachute.png') no-repeat center center;
+  background-size: contain;
+}
+
+.star {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: url('./components/assets/star.png') no-repeat center center;
+  background-size: contain;
+}
+
+.timer, .fuel, .stars-counter {
+  position: absolute;
+  color: #fff;
+  font-size: 18px;
+}
+
+.timer {
+  top: 10px;
+  left: 10px;
+}
+
+.fuel {
+  top: 10px;
+  right: 10px;
+}
+
+.stars-counter {
+  top: 40px;
+  right: 10px;
+}
+
+.pause-button {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  padding: 10px;
+  background-color: #f00;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.start-screen {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  height: 100%;
 }
 
-.App-link {
-  color: #61dafb;
+.start-screen button {
+  font-size: 24px;
+  padding: 20px 40px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Game Over Styles */
+.game-over {
+  text-align: center;
+  padding: 20px;
+}
+
+.game-over input {
+  padding: 10px;
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+.game-over button {
+  padding: 10px;
+  font-size: 16px;
+  background-color: #f00;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.game-over .ranking {
+  margin: 20px 0;
+}
+
+.game-over .ranking ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.game-over .ranking li {
+  font-size: 18px;
+}
+
+.game-over .ranking li:first-child {
+  font-weight: bold;
+}
+
+/* Cloud Animation Styles */
+.clouds {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url('./components/assets/cloud.jpg') repeat-x;
+  animation: moveClouds 20s linear infinite;
+}
+
+@keyframes moveClouds {
+  0% { background-position-x: 0; }
+  100% { background-position-x: 1024px; }
 }
