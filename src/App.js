@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
-import air from "./components/assets/aircraft1.png"
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
