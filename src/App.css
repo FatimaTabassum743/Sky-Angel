@@ -12,7 +12,8 @@
   height: 600px;
   margin: 0 auto;
   overflow: hidden;
-  background-color: #87CEEB; /* Sky blue background */
+  background: linear-gradient(to bottom, #87CEEB, rgba(255, 255, 255, 0.5));
+/* Sky blue background */
 }
 
 .game-screen {
@@ -23,9 +24,9 @@
 
 .aircraft {
   position: absolute;
-  width: 100px;
-  height: 50px;
-  background: url('./components/assets/aircraft.png') no-repeat center center;
+  width: 200px;
+  height: 80px;
+  background: url('./components/assets/aircraft1.png') no-repeat center center;
   background-size: contain;
 }
 /* src/App.css */
@@ -47,26 +48,28 @@
 }
 
 .star {
-  background-image: url('./components/assets/star.png');
+  background-image: url('./components/assets/star2.png');
 }
 
 .parachute {
-  background-image: url('./components/assets/parachute.png');
+  background-image: url('./components/assets/para2.webp');
 }
 
 .bird {
   position: absolute;
   width: 50px;
   height: 50px;
-  background: url('./components/assets/bird.png') no-repeat center center;
+  background: url('./components/assets/bird5.png') no-repeat center center;
   background-size: contain;
 }
 
 .parachute {
   position: absolute;
-  width: 50px;
-  height: 50px;
-  background: url('./components/assets/parachute.png') no-repeat center center;
+  width: 80px;
+  height: 80px;
+  background: url('./components/assets/para2.webp') no-repeat center center;
+  background-color: transparent;
+  
   background-size: contain;
 }
 
@@ -74,7 +77,7 @@
   position: absolute;
   width: 30px;
   height: 30px;
-  background: url('./components/assets/star.png') no-repeat center center;
+  background: url('./components/assets/star2.png') no-repeat center center;
   background-size: contain;
 }
 
@@ -100,9 +103,12 @@
 }
 
 .pause-button {
-  position: absolute;
+  /* position: absolute; */
+   position: relative;
+  margin-top: 50px;
   bottom: 10px;
   left: 10px;
+
   padding: 10px;
   background-color: #f00;
   color: #fff;
@@ -163,13 +169,14 @@
 }
 
 /* Cloud Animation Styles */
-.clouds {
+.cloud {
+  width: 250px;
+  height: 200px;
+  background-image: url('./components/assets/cloud5.webp'); /* Use an actual cloud image */
+  background-size: cover;
   position: absolute;
-  width: 100%;
-  height: 100%;
-  background: url('./components/assets/cloud.jpg') repeat-x;
-  animation: moveClouds 20s linear infinite;
 }
+
 
 @keyframes moveClouds {
   0% { background-position-x: 0; }

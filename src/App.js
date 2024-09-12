@@ -13,6 +13,7 @@ function App() {
   const [birds, setBirds] = useState([]);
   const [parachutes, setParachutes] = useState([]);
   const [stars, setStars] = useState([]);
+  const [clouds, setClouds] = useState([]);
   const [starCount, setStarCount] = useState(0);
   const [userName, setUserName] = useState('');
   const [ranking, setRanking] = useState([]);
@@ -23,7 +24,23 @@ function App() {
   const birdRef = useRef(null);
   const parachuteRef = useRef(null);
   const starRef = useRef(null);
-
+  useEffect(() => {
+    if (gameStarted && !gamePaused && !gameOver) {
+      const cloudMovement = setInterval(() => {
+        moveClouds();
+      }, 100);
+  
+      const cloudSpawnInterval = setInterval(() => {
+        spawnCloud();
+      }, 7000); // Clouds spawn every 7 seconds
+  
+      return () => {
+        clearInterval(cloudMovement);
+        clearInterval(cloudSpawnInterval);
+      };
+    }
+  }, [gameStarted, gamePaused, gameOver]);
+  
   useEffect(() => {
     if (gameStarted && !gamePaused && !gameOver) {
       timerRef.current = setInterval(() => {
@@ -186,7 +203,24 @@ function App() {
       setGamePaused((prev) => !prev);
     }
   };
-
+  const spawnCloud = () => {
+    const newCloud = {
+      x: 1024, // Start position from the right
+      y: Math.floor(Math.random()*200),  // Random vertical position (height less than screen height)
+    };
+    setClouds((prev) => [...prev, newCloud]);
+  };
+  const moveClouds = () => {
+    setClouds((prev) => {
+      return prev
+        .map((cloud) => ({
+          ...cloud,
+          x: cloud.x - 2, // Move cloud left slowly (slower than birds)
+        }))
+        .filter((cloud) => cloud.x > -150); // Remove off-screen clouds (assuming cloud width is 150px)
+    });
+  };
+    
   const spawnBird = () => {
     const newBird = {
       x: 1024, // Start position from the right
@@ -208,10 +242,18 @@ function App() {
 
   const spawnParachute = () => {
     const newParachute = {
-      x: 1024, // Start position from the right
-      y: Math.floor(Math.random() * (768 - 50)), // Random vertical position
+      x: Math.floor(Math.random() * (1024 - 50)), // Random horizontal position
+      y: 0, // Start position at the top
     };
     setParachutes((prev) => [...prev, newParachute]);
+  };
+  
+  const spawnStar = () => {
+    const newStar = {
+      x: Math.floor(Math.random() * (1024 - 30)), // Random horizontal position
+      y: 0, // Start position at the top
+    };
+    setStars((prev) => [...prev, newStar]);
   };
 
   const moveParachutes = () => {
@@ -219,31 +261,24 @@ function App() {
       return prev
         .map((parachute) => ({
           ...parachute,
-          x: parachute.x - 4, // Move parachute left
+          y: parachute.y + 4, // Move parachute downward
         }))
-        .filter((parachute) => parachute.x > -50); // Remove off-screen parachutes
+        .filter((parachute) => parachute.y < 768); // Remove off-screen parachutes
     });
   };
-
-  const spawnStar = () => {
-    const newStar = {
-      x: 1024, // Start position from the right
-      y: Math.floor(Math.random() * (768 - 30)), // Random vertical position
-    };
-    setStars((prev) => [...prev, newStar]);
-  };
-
+  
   const moveStars = () => {
     setStars((prev) => {
       return prev
         .map((star) => ({
           ...star,
-          x: star.x - 3, // Move star left
+          y: star.y + 3, // Move star downward
         }))
-        .filter((star) => star.x > -30); // Remove off-screen stars
+        .filter((star) => star.y < 768); // Remove off-screen stars
     });
   };
-
+  
+  
   useEffect(() => {
     if (gameStarted && !gamePaused && !gameOver) {
       const birdMovement = setInterval(() => {
@@ -275,6 +310,9 @@ function App() {
     if (!userName.trim()) {
       return; // Prevent submission if the name is empty
     }
+    // console.log(response,"ressss");
+      window.alert("Rank Store at backend Api not working")
+    
   
     try {
       const response = await fetch('http://xxxxxxxxx/register.php', {
@@ -288,8 +326,7 @@ function App() {
           stars: starCount,
         }),
       });
-      console.log(response,"ressss");
-      window.alert("Rank Store at backend")
+      
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -362,6 +399,14 @@ function App() {
               className="aircraft"
               style={{ left: aircraftPosition.x + 'px', top: aircraftPosition.y + 'px' }}
             ></div>
+            {clouds.map((cloud, index) => (
+  <div
+    key={index}
+    className="cloud"
+    style={{ left: cloud.x + 'px', top: cloud.y + 'px' }}
+  ></div>
+))}
+
             {birds.map((bird, index) => (
               <div
                 key={index}
@@ -385,7 +430,8 @@ function App() {
             ))}
             <div className="timer">Time: {timer}s</div>
             <div className="fuel">Fuel: {fuel}</div>
-            <div className="stars-counter">Stars: {starCount}</div>
+            <div className="stars-counter">Stars: {starCount > 0 ? starCount - 1 : 0}</div>
+
             <button className="pause-button" onClick={handlePauseResume}>
               {gamePaused ? 'Resume' : 'Pause'}
             </button>
