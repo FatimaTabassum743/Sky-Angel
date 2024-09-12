@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './App.css';
+import React, { useState, useEffect, useRef } from "react";
+import "./App.css";
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
@@ -13,13 +13,14 @@ function App() {
   const [stars, setStars] = useState([]);
   const [clouds, setClouds] = useState([]);
   const [starCount, setStarCount] = useState(0);
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState("");
   const [ranking, setRanking] = useState(() => {
     // Load ranking from localStorage if available
-    const storedRanking = localStorage.getItem('ranking');
+    const storedRanking = localStorage.getItem("ranking");
     return storedRanking ? JSON.parse(storedRanking) : [];
   });
   const [submitDisabled, setSubmitDisabled] = useState(true);
+  const [submitDisabledstart, setSubmitDisabledstart] = useState(true);
 
   const timerRef = useRef(null);
   const fuelRef = useRef(null);
@@ -31,18 +32,18 @@ function App() {
       const cloudMovement = setInterval(() => {
         moveClouds();
       }, 100);
-  
+
       const cloudSpawnInterval = setInterval(() => {
         spawnCloud();
       }, 6000); // Clouds spawn every 7 seconds
-  
+
       return () => {
         clearInterval(cloudMovement);
         clearInterval(cloudSpawnInterval);
       };
     }
   }, [gameStarted, gamePaused, gameOver]);
-  
+
   useEffect(() => {
     if (gameStarted && !gamePaused && !gameOver) {
       timerRef.current = setInterval(() => {
@@ -72,8 +73,8 @@ function App() {
         spawnStar();
       }, 5000);
 
-      window.addEventListener('keydown', handleKeyDown);
-      window.addEventListener('keyup', handlePauseResume);
+      window.addEventListener("keydown", handleKeyDown);
+      window.addEventListener("keyup", handlePauseResume);
 
       return () => {
         clearInterval(timerRef.current);
@@ -81,8 +82,8 @@ function App() {
         clearInterval(birdRef.current);
         clearInterval(parachuteRef.current);
         clearInterval(starRef.current);
-        window.removeEventListener('keydown', handleKeyDown);
-        window.removeEventListener('keydown', handlePauseResume);
+        window.removeEventListener("keydown", handleKeyDown);
+        window.removeEventListener("keydown", handlePauseResume);
       };
     }
   }, [gameStarted, gamePaused, gameOver]);
@@ -91,51 +92,48 @@ function App() {
     if (gameStarted && !gamePaused && !gameOver) {
       const collisionCheck = setInterval(() => {
         setBirds((prev) => {
-          return prev
-            .filter((bird) => {
-              if (
-                aircraftPosition.x < bird.x + 50 &&
-                aircraftPosition.x + 100 > bird.x &&
-                aircraftPosition.y < bird.y + 50 &&
-                aircraftPosition.y + 50 > bird.y
-              ) {
-                endGame();
-                return false;
-              }
-              return true;
-            });
+          return prev.filter((bird) => {
+            if (
+              aircraftPosition.x < bird.x + 50 &&
+              aircraftPosition.x + 100 > bird.x &&
+              aircraftPosition.y < bird.y + 50 &&
+              aircraftPosition.y + 50 > bird.y
+            ) {
+              endGame();
+              return false;
+            }
+            return true;
+          });
         });
 
         setParachutes((prev) => {
-          return prev
-            .filter((parachute) => {
-              if (
-                aircraftPosition.x < parachute.x + 50 &&
-                aircraftPosition.x + 100 > parachute.x &&
-                aircraftPosition.y < parachute.y + 50 &&
-                aircraftPosition.y + 50 > parachute.y
-              ) {
-                setFuel((prev) => Math.min(100, prev + 10)); // Increase fuel, max 100
-                return false; // Remove parachute
-              }
-              return true;
-            });
+          return prev.filter((parachute) => {
+            if (
+              aircraftPosition.x < parachute.x + 50 &&
+              aircraftPosition.x + 100 > parachute.x &&
+              aircraftPosition.y < parachute.y + 50 &&
+              aircraftPosition.y + 50 > parachute.y
+            ) {
+              setFuel((prev) => Math.min(100, prev + 10)); // Increase fuel, max 100
+              return false; // Remove parachute
+            }
+            return true;
+          });
         });
 
         setStars((prev) => {
-          return prev
-            .filter((star) => {
-              if (
-                aircraftPosition.x < star.x + 50 &&
-                aircraftPosition.x + 100 > star.x &&
-                aircraftPosition.y < star.y + 50 &&
-                aircraftPosition.y + 50 > star.y
-              ) {
-                setStarCount((prev) => prev + 1);
-                return false; // Remove star
-              }
-              return true;
-            });
+          return prev.filter((star) => {
+            if (
+              aircraftPosition.x < star.x + 50 &&
+              aircraftPosition.x + 100 > star.x &&
+              aircraftPosition.y < star.y + 50 &&
+              aircraftPosition.y + 50 > star.y
+            ) {
+              setStarCount((prev) => prev + 1);
+              return false; // Remove star
+            }
+            return true;
+          });
         });
       }, 10);
 
@@ -156,11 +154,10 @@ function App() {
     setParachutes([]);
     setStars([]);
     setStarCount(0);
-    setUserName(''); // Optional: Clear this if you want a new name for each session
+    setUserName(""); // Optional: Clear this if you want a new name for each session
     setSubmitDisabled(true);
     // Do not reset the ranking state here, so it persists across game sessions
   };
-  
 
   const endGame = () => {
     setGameStarted(false);
@@ -172,7 +169,6 @@ function App() {
     clearInterval(starRef.current);
   };
 
-
   const handleKeyDown = (e) => {
     if (!gameStarted || gamePaused || gameOver) return;
 
@@ -182,16 +178,16 @@ function App() {
       let newY = prev.y;
 
       switch (e.key) {
-        case 'ArrowLeft':
+        case "ArrowLeft":
           newX = Math.max(0, prev.x - step);
           break;
-        case 'ArrowRight':
+        case "ArrowRight":
           newX = Math.min(1024 - 100, prev.x + step); // 1024 is the screen width, 100 is aircraft width
           break;
-        case 'ArrowUp':
+        case "ArrowUp":
           newY = Math.max(0, prev.y - step);
           break;
-        case 'ArrowDown':
+        case "ArrowDown":
           newY = Math.min(768 - 50, prev.y + step); // 768 is the screen height, 50 is aircraft height
           break;
         default:
@@ -203,14 +199,14 @@ function App() {
   };
 
   const handlePauseResume = (e) => {
-    if (e.key === ' ' || e.type === 'click') {
+    if (e.key === " " || e.type === "click") {
       setGamePaused((prev) => !prev);
     }
   };
   const spawnCloud = () => {
     const newCloud = {
       x: 1024, // Start position from the right
-      y: Math.floor(Math.random()*200),  // Random vertical position (height less than screen height)
+      y: Math.floor(Math.random() * 200), // Random vertical position (height less than screen height)
     };
     setClouds((prev) => [...prev, newCloud]);
   };
@@ -224,7 +220,7 @@ function App() {
         .filter((cloud) => cloud.x > -150); // Remove off-screen clouds (assuming cloud width is 150px)
     });
   };
-    
+
   const spawnBird = () => {
     const newBird = {
       x: 1024, // Start position from the right
@@ -251,7 +247,7 @@ function App() {
     };
     setParachutes((prev) => [...prev, newParachute]);
   };
-  
+
   const spawnStar = () => {
     const newStar = {
       x: Math.floor(Math.random() * (1024 - 50)), // Random horizontal position
@@ -270,7 +266,7 @@ function App() {
         .filter((parachute) => parachute.y < 768); // Remove off-screen parachutes
     });
   };
-  
+
   const moveStars = () => {
     setStars((prev) => {
       return prev
@@ -281,8 +277,7 @@ function App() {
         .filter((star) => star.y < 768); // Remove off-screen stars
     });
   };
-  
-  
+
   useEffect(() => {
     if (gameStarted && !gamePaused && !gameOver) {
       const birdMovement = setInterval(() => {
@@ -305,38 +300,38 @@ function App() {
     }
   }, [gameStarted, gamePaused, gameOver]);
 
-
   const handleSubmit = () => {
     if (!userName.trim()) return; // Prevent submission if the name is empty
-  
+
     const newPlayer = {
       id: ranking.length + 1, // Generate a new ID for each entry
       name: userName,
       time: timer,
       stars: Math.floor(starCount / 2),
     };
-  
+
     const updatedRanking = [...ranking, newPlayer].sort((a, b) => {
       if (b.stars !== a.stars) {
         return b.stars - a.stars;
       }
       return a.time - b.time;
     });
-  
+
     setRanking(updatedRanking);
-  
+    console.log(updatedRanking, "upd");
+
     // Save updated ranking in localStorage
-    localStorage.setItem('ranking', JSON.stringify(updatedRanking));
-  
+    localStorage.setItem("ranking", JSON.stringify(updatedRanking));
+
     // Optionally clear the name after submission
-    setUserName('');
-  };
-  
-  const handleUserNameChange = (e) => {
-    setUserName(e.target.value);
-    setSubmitDisabled(e.target.value.trim() === '');
+    setUserName("");
+    setSubmitDisabledstart(false);
   };
 
+  const handleUserNameChange = (e) => {
+    setUserName(e.target.value);
+    setSubmitDisabled(e.target.value.trim() === "");
+  };
 
   // const handleSubmit = async () => {
   //   if (!userName.trim()) {
@@ -344,8 +339,7 @@ function App() {
   //   }
   //   // console.log(response,"ressss");
   //     window.alert("Rank Store at backend Api not working")
-    
-  
+
   //   try {
   //     const response = await fetch('http://xxxxxxxxx/register.php', {
   //       method: 'POST',
@@ -358,11 +352,11 @@ function App() {
   //         stars: starCount,
   //       }),
   //     });
-      
+
   //     if (!response.ok) {
   //       throw new Error('Network response was not ok');
   //     }
-  
+
   //     const text = await response.text(); // Get response as text
   //     try {
   //       const data = JSON.parse(text); // Attempt to parse JSON
@@ -374,7 +368,7 @@ function App() {
   //           }
   //           return a.time - b.time;
   //         });
-  
+
   //       setRanking(sortedRanking);
   //     } catch (error) {
   //       console.error('Failed to parse JSON:', error);
@@ -383,13 +377,14 @@ function App() {
   //     console.error('Failed to fetch ranking:', error);
   //   }
   // };
-  
+
   return (
     <div className="App">
       {!gameStarted && !gameOver && (
         <div className="start-screen">
-   
-          <button style={{margin:"300px"}} onClick={startGame}>Start Game</button>
+          <button style={{ margin: "300px" }} onClick={startGame}>
+            Start Game
+          </button>
         </div>
       )}
       {gameOver && !gameStarted && (
@@ -404,86 +399,106 @@ function App() {
           />
           <button
             onClick={handleSubmit}
-            // disabled={submitDisabled}
-            disabled={true}
-          
+            disabled={submitDisabled}
+            style={{
+              backgroundColor: submitDisabled ? "#d3d3d3" : "#4CAF50", // Light grey when disabled, green when enabled
+              cursor: submitDisabled ? "not-allowed" : "pointer", // Change cursor to not-allowed when disabled
+              color: submitDisabled ? "#a9a9a9" : "#fff", // Change text color when disabled
+              border: "none",
+              padding: "10px 20px",
+              borderRadius: "5px",
+            }}
           >
             Continue
           </button>
+
           <div className="ranking">
             <h3>Ranking</h3>
             <table className="ranking-table">
-  <thead>
-    <tr>
-      <th>Rank</th>
-      <th>Name</th>
-      <th>Time (s)</th>
-      <th>Stars</th>
-    </tr>
-  </thead>
-  <tbody>
-    {ranking.map((player, index) => (
-      <tr key={player.id}>
-        <td>{index + 1}</td>
-        <td>{player.name}</td>
-        <td>{player.time}</td>
-        <td>{player.stars}</td>
-      </tr>
-    ))}
-  </tbody>
-</table>
-
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Name</th>
+                  <th>Time (s)</th>
+                  <th>Stars</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ranking.map((player, index) => (
+                  <tr key={player.id}>
+                    <td>{index + 1}</td>
+                    <td>{player.name}</td>
+                    <td>{player.time}</td>
+                    <td>{player.stars}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <button onClick={startGame}>Start New Game</button>
+          <button
+            disabled={submitDisabledstart}
+            style={{
+              backgroundColor: submitDisabledstart ? "#d3d3d3" : "#4CAF50", // Light grey when disabled, green when enabled
+              cursor: submitDisabledstart ? "not-allowed" : "pointer", // Change cursor to not-allowed when disabled
+              color: submitDisabledstart ? "#a9a9a9" : "#fff", // Change text color when disabled
+              border: "none",
+              padding: "10px 20px",
+              borderRadius: "5px",
+            }}
+            onClick={startGame}
+          >
+            Start New Game
+          </button>
         </div>
       )}
       {gameStarted && !gameOver && (
         <div className="game-container">
-          <div
-            className="game-screen"
-           
-          > 
-          {/* <img src={} height={100} width={100}  alt='cloud'></img> */}
+          <div className="game-screen">
+            {/* <img src={} height={100} width={100}  alt='cloud'></img> */}
             <div
               className="aircraft"
-              style={{ left: aircraftPosition.x + 'px', top: aircraftPosition.y + 'px' }}
+              style={{
+                left: aircraftPosition.x + "px",
+                top: aircraftPosition.y + "px",
+              }}
             ></div>
             {clouds.map((cloud, index) => (
-  <div
-    key={index}
-    className="cloud"
-    style={{ left: cloud.x + 'px', top: cloud.y + 'px' }}
-  ></div>
-))}
+              <div
+                key={index}
+                className="cloud"
+                style={{ left: cloud.x + "px", top: cloud.y + "px" }}
+              ></div>
+            ))}
 
             {birds.map((bird, index) => (
               <div
                 key={index}
                 className="bird"
-                style={{ left: bird.x + 'px', top: bird.y + 'px' }}
+                style={{ left: bird.x + "px", top: bird.y + "px" }}
               ></div>
             ))}
             {parachutes.map((parachute, index) => (
               <div
                 key={index}
                 className="parachute"
-                style={{ left: parachute.x + 'px', top: parachute.y + 'px' }}
+                style={{ left: parachute.x + "px", top: parachute.y + "px" }}
               ></div>
             ))}
             {stars.map((star, index) => (
               <div
                 key={index}
                 className="star"
-                style={{ left: star.x + 'px', top: star.y + 'px' }}
+                style={{ left: star.x + "px", top: star.y + "px" }}
               ></div>
             ))}
             <div className="timer">Time: {timer}s</div>
             <div className="fuel">Fuel: {fuel}</div>
-            <div className="stars-counter">Stars: {Math.floor(starCount / 2)}</div>
-
+            <div className="stars-counter">
+              Stars: {Math.floor(starCount / 2)}
+            </div>
 
             <button className="pause-button" onClick={handlePauseResume}>
-              {gamePaused ? 'Resume' : 'Pause'}
+              {gamePaused ? "Resume" : "Pause"}
             </button>
           </div>
         </div>
@@ -493,3 +508,4 @@ function App() {
 }
 
 export default App;
+
