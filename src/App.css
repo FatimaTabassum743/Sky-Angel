@@ -121,12 +121,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  
+
+
+  background-size: cover; /* Adjusts the image to cover the entire element */
+  background-position: center; /* Centers the image */
+  background-repeat: no-repeat; /* Prevents the image from repeating */
+  background: linear-gradient(to bottom, #87CEEB, rgba(255, 255, 255, 0.5));
 }
+
 
 .start-screen button {
   font-size: 24px;
   padding: 20px 40px;
+  border-radius: 16px;
 }
 
 /* Game Over Styles */
@@ -149,24 +157,38 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+
 }
 
 .game-over .ranking {
   margin: 20px 0;
 }
 
-.game-over .ranking ul {
-  list-style-type: none;
-  padding: 0;
+
+.ranking-table {
+  width: 80%; /* Adjust width as needed */
+  margin: 0 auto; /* Center horizontally */
+  border-collapse: collapse;
 }
 
-.game-over .ranking li {
-  font-size: 18px;
+.ranking-table th, .ranking-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center; /* Center-align text in cells */
 }
 
-.game-over .ranking li:first-child {
-  font-weight: bold;
+.ranking-table th {
+  background-color: #f4f4f4;
 }
+
+.ranking-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.ranking-table tr:hover {
+  background-color: #ddd;
+}
+
 
 /* Cloud Animation Styles */
 .cloud {

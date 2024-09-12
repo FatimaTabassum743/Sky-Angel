@@ -1,7 +1,6 @@
-// src/App.js
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
-
+import air from "./components/assets/aircraft1.png"
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
@@ -16,7 +15,11 @@ function App() {
   const [clouds, setClouds] = useState([]);
   const [starCount, setStarCount] = useState(0);
   const [userName, setUserName] = useState('');
-  const [ranking, setRanking] = useState([]);
+  const [ranking, setRanking] = useState(() => {
+    // Load ranking from localStorage if available
+    const storedRanking = localStorage.getItem('ranking');
+    return storedRanking ? JSON.parse(storedRanking) : [];
+  });
   const [submitDisabled, setSubmitDisabled] = useState(true);
 
   const timerRef = useRef(null);
@@ -32,7 +35,7 @@ function App() {
   
       const cloudSpawnInterval = setInterval(() => {
         spawnCloud();
-      }, 7000); // Clouds spawn every 7 seconds
+      }, 6000); // Clouds spawn every 7 seconds
   
       return () => {
         clearInterval(cloudMovement);
@@ -60,18 +63,18 @@ function App() {
 
       birdRef.current = setInterval(() => {
         spawnBird();
-      }, 3000);
+      }, 1000);
 
       parachuteRef.current = setInterval(() => {
         spawnParachute();
-      }, 5000);
+      }, 3000);
 
       starRef.current = setInterval(() => {
         spawnStar();
-      }, 7000);
+      }, 5000);
 
       window.addEventListener('keydown', handleKeyDown);
-      window.addEventListener('keydown', handlePauseResume);
+      window.addEventListener('keyup', handlePauseResume);
 
       return () => {
         clearInterval(timerRef.current);
@@ -124,9 +127,9 @@ function App() {
           return prev
             .filter((star) => {
               if (
-                aircraftPosition.x < star.x + 30 &&
+                aircraftPosition.x < star.x + 50 &&
                 aircraftPosition.x + 100 > star.x &&
-                aircraftPosition.y < star.y + 30 &&
+                aircraftPosition.y < star.y + 50 &&
                 aircraftPosition.y + 50 > star.y
               ) {
                 setStarCount((prev) => prev + 1);
@@ -135,7 +138,7 @@ function App() {
               return true;
             });
         });
-      }, 100);
+      }, 10);
 
       return () => {
         clearInterval(collisionCheck);
@@ -154,10 +157,11 @@ function App() {
     setParachutes([]);
     setStars([]);
     setStarCount(0);
-    setUserName('');
+    setUserName(''); // Optional: Clear this if you want a new name for each session
     setSubmitDisabled(true);
-    setRanking([]);
+    // Do not reset the ranking state here, so it persists across game sessions
   };
+  
 
   const endGame = () => {
     setGameStarted(false);
@@ -168,6 +172,7 @@ function App() {
     clearInterval(parachuteRef.current);
     clearInterval(starRef.current);
   };
+
 
   const handleKeyDown = (e) => {
     if (!gameStarted || gamePaused || gameOver) return;
@@ -234,7 +239,7 @@ function App() {
       return prev
         .map((bird) => ({
           ...bird,
-          x: bird.x - 5, // Move bird left
+          x: bird.x - 8, // Move bird left
         }))
         .filter((bird) => bird.x > -50); // Remove off-screen birds
     });
@@ -250,7 +255,7 @@ function App() {
   
   const spawnStar = () => {
     const newStar = {
-      x: Math.floor(Math.random() * (1024 - 30)), // Random horizontal position
+      x: Math.floor(Math.random() * (1024 - 50)), // Random horizontal position
       y: 0, // Start position at the top
     };
     setStars((prev) => [...prev, newStar]);
@@ -261,7 +266,7 @@ function App() {
       return prev
         .map((parachute) => ({
           ...parachute,
-          y: parachute.y + 4, // Move parachute downward
+          y: parachute.y + 8, // Move parachute downward
         }))
         .filter((parachute) => parachute.y < 768); // Remove off-screen parachutes
     });
@@ -272,7 +277,7 @@ function App() {
       return prev
         .map((star) => ({
           ...star,
-          y: star.y + 3, // Move star downward
+          y: star.y + 5, // Move star downward
         }))
         .filter((star) => star.y < 768); // Remove off-screen stars
     });
@@ -301,62 +306,91 @@ function App() {
     }
   }, [gameStarted, gamePaused, gameOver]);
 
+
+  const handleSubmit = () => {
+    if (!userName.trim()) return; // Prevent submission if the name is empty
+  
+    const newPlayer = {
+      id: ranking.length + 1, // Generate a new ID for each entry
+      name: userName,
+      time: timer,
+      stars: Math.floor(starCount / 2),
+    };
+  
+    const updatedRanking = [...ranking, newPlayer].sort((a, b) => {
+      if (b.stars !== a.stars) {
+        return b.stars - a.stars;
+      }
+      return a.time - b.time;
+    });
+  
+    setRanking(updatedRanking);
+  
+    // Save updated ranking in localStorage
+    localStorage.setItem('ranking', JSON.stringify(updatedRanking));
+  
+    // Optionally clear the name after submission
+    setUserName('');
+  };
+  
   const handleUserNameChange = (e) => {
     setUserName(e.target.value);
     setSubmitDisabled(e.target.value.trim() === '');
   };
 
-  const handleSubmit = async () => {
-    if (!userName.trim()) {
-      return; // Prevent submission if the name is empty
-    }
-    // console.log(response,"ressss");
-      window.alert("Rank Store at backend Api not working")
+
+  // const handleSubmit = async () => {
+  //   if (!userName.trim()) {
+  //     return; // Prevent submission if the name is empty
+  //   }
+  //   // console.log(response,"ressss");
+  //     window.alert("Rank Store at backend Api not working")
     
   
-    try {
-      const response = await fetch('http://xxxxxxxxx/register.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          name: userName,
-          time: timer,
-          stars: starCount,
-        }),
-      });
+  //   try {
+  //     const response = await fetch('http://xxxxxxxxx/register.php', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/x-www-form-urlencoded',
+  //       },
+  //       body: new URLSearchParams({
+  //         name: userName,
+  //         time: timer,
+  //         stars: starCount,
+  //       }),
+  //     });
       
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+  //     if (!response.ok) {
+  //       throw new Error('Network response was not ok');
+  //     }
   
-      const text = await response.text(); // Get response as text
-      try {
-        const data = JSON.parse(text); // Attempt to parse JSON
-        console.log(data,"data");
-        const sortedRanking = data
-          .sort((a, b) => {
-            if (b.stars !== a.stars) {
-              return b.stars - a.stars;
-            }
-            return a.time - b.time;
-          });
+  //     const text = await response.text(); // Get response as text
+  //     try {
+  //       const data = JSON.parse(text); // Attempt to parse JSON
+  //       console.log(data,"data");
+  //       const sortedRanking = data
+  //         .sort((a, b) => {
+  //           if (b.stars !== a.stars) {
+  //             return b.stars - a.stars;
+  //           }
+  //           return a.time - b.time;
+  //         });
   
-        setRanking(sortedRanking);
-      } catch (error) {
-        console.error('Failed to parse JSON:', error);
-      }
-    } catch (error) {
-      console.error('Failed to fetch ranking:', error);
-    }
-  };
+  //       setRanking(sortedRanking);
+  //     } catch (error) {
+  //       console.error('Failed to parse JSON:', error);
+  //     }
+  //   } catch (error) {
+  //     console.error('Failed to fetch ranking:', error);
+  //   }
+  // };
   
   return (
     <div className="App">
       {!gameStarted && !gameOver && (
         <div className="start-screen">
-          <button onClick={startGame}>Start Game</button>
+   
+          <button style={{margin:"300px"}} onClick={startGame}>Start Game</button>
         </div>
       )}
       {gameOver && !gameStarted && (
@@ -371,19 +405,35 @@ function App() {
           />
           <button
             onClick={handleSubmit}
-            disabled={submitDisabled}
+            // disabled={submitDisabled}
+            disabled={true}
+          
           >
-            Submit
+            Continue
           </button>
           <div className="ranking">
             <h3>Ranking</h3>
-            <ul>
-              {ranking.map((player, index) => (
-                <li key={player.id}>
-                  {index + 1}. {player.name} - Time: {player.time}s, Stars: {player.stars}
-                </li>
-              ))}
-            </ul>
+            <table className="ranking-table">
+  <thead>
+    <tr>
+      <th>Rank</th>
+      <th>Name</th>
+      <th>Time (s)</th>
+      <th>Stars</th>
+    </tr>
+  </thead>
+  <tbody>
+    {ranking.map((player, index) => (
+      <tr key={player.id}>
+        <td>{index + 1}</td>
+        <td>{player.name}</td>
+        <td>{player.time}</td>
+        <td>{player.stars}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
           </div>
           <button onClick={startGame}>Start New Game</button>
         </div>
@@ -430,7 +480,8 @@ function App() {
             ))}
             <div className="timer">Time: {timer}s</div>
             <div className="fuel">Fuel: {fuel}</div>
-            <div className="stars-counter">Stars: {starCount > 0 ? starCount - 1 : 0}</div>
+            <div className="stars-counter">Stars: {Math.floor(starCount / 2)}</div>
+
 
             <button className="pause-button" onClick={handlePauseResume}>
               {gamePaused ? 'Resume' : 'Pause'}
