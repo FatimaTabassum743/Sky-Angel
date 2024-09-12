@@ -307,7 +307,7 @@ function App() {
       id: ranking.length + 1, // Generate a new ID for each entry
       name: userName,
       time: timer,
-      stars: Math.ceil(starCount / 2),
+      stars: (starCount / 2),
     };
 
     const updatedRanking = [...ranking, newPlayer].sort((a, b) => {
@@ -494,7 +494,7 @@ function App() {
             <div className="timer">Time: {timer}s</div>
             <div className="fuel">Fuel: {fuel}</div>
             <div className="stars-counter">
-              Stars: {Math.ceil(starCount / 2)}
+              Stars: {(starCount / 2)}
             </div>
 
             <button className="pause-button" onClick={handlePauseResume}>
